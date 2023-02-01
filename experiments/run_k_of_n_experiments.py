@@ -29,6 +29,6 @@ elif (args.database == "MariaDB"):
     if args.mode == "demo":
         python_args += ["--num_secrets", "1"]
     else:
-        python_args += ["--num_secrets" "1", "20", "40", "60", "80", "100", "120", "140", "160", "180", "200", "220", "240"]
+        python_args += ["--num_secrets", "1", "20", "40", "60", "80", "100", "120", "140", "160", "180", "200", "220", "240"]
     print("WARNING: Prior to running this program with MariaDB, make sure your DB compression configuration matches the requested compression algorithm")
     subprocess.run(python_args, stdout=open(args.outfile, "a"))

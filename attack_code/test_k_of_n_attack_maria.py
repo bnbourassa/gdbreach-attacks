@@ -40,8 +40,10 @@ if sys.argv[2] == "--num_secrets":
     secrets_to_try = [int(a) for a in sys.argv[3:]]
 
 print("records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time")
-
+ 
 for num_secrets in secrets_to_try:
+    print("current num_secrets:")
+    print(num_secrets)
     random.shuffle(possibilities)
     for trial in range(1):
         success = False
@@ -54,14 +56,14 @@ for num_secrets in secrets_to_try:
         correct_guesses = set()
         for secret_idx in range(num_secrets):
             secret = possibilities[(trial + secret_idx) % len(possibilities)]
-            control.insert_row(table, secret_idx, secret)
+            control.insert_row(table, secret_idx, secret, random.choices(string.ascii_lowercase, k=10))
             guesses.append(secret)
             correct_guesses.add(secret)
-        
+
         for secret_idx in range(num_secrets, 1500):
             wrong_guess = possibilities[(trial + secret_idx) % len(possibilities)]
             guesses.append(wrong_guess)
-        
+                
         _500_guesses = set(guesses[:500])
         _750_guesses = set(guesses[:750])
         _1000_guesses = set(guesses[:1000])

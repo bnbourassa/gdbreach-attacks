@@ -11,7 +11,7 @@ class MariaDBController:
     def __init__(self, db : str):
         self.db_name = db
         self.db_path = tablespaces_path + db + "/"
-        self.conn = mariadb.connect(user="root", host="localhost", database=db)
+        self.conn = mariadb.connect(user="root", unix_socket="/var/run/mysqld/mysqld.sock", host="localhost", database=db)
         self.cur = self.conn.cursor()
         self.old_edit_time = None
         self.backupdict = dict()
@@ -53,7 +53,7 @@ class MariaDBController:
         compressed_str = "1" if compressed else "0"
         encrypted_str = "YES" if encrypted else "NO"
         self.cur.execute("create table " + tablename + " (id INT not null, data VARCHAR(" + str(varchar_len) +
-                "), primary key(id)) ENGINE=InnoDB PAGE_COMPRESSED=" + compressed_str + " ENCRYPTED=" + encrypted_str)
+                "), noise VARCHAR(" + str(varchar_len) + "), primary key(id)) ENGINE=InnoDB PAGE_COMPRESSED=" + compressed_str + " ENCRYPTED=" + encrypted_str)
         self.conn.commit()
         time.sleep(2)
         self.old_edit_time = os.path.getmtime(self.db_path + tablename + ".ibd")
@@ -89,7 +89,7 @@ class MariaDBController:
             print("Size of table " + tablename + ": " + str(table_size))
         return table_size
 
-    def insert_row(self, tablename : str, idx : int, data : str):
+    def insert_row(self, tablename : str, idx : int, data : str, noise: str):
         self.cur.execute("insert into " + tablename + " (id, data) values (?, ?)", (idx, data))
         self.conn.commit()
         self.__flush_and_wait_for_change(tablename)

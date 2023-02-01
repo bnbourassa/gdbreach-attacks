@@ -2,6 +2,7 @@ import utils.mariadb_utils as utils
 import dbreacher
 import time
 import random
+import string
 
 class DBREACHerImpl(dbreacher.DBREACHer):
     def __init__(self, controller : utils.MariaDBController, tablename : str, startIdx : int, maxRowSize: int, fillerCharSet : set, compressCharAscii : int):
@@ -83,7 +84,7 @@ class DBREACHerImpl(dbreacher.DBREACHer):
         oldSize = self.control.get_table_size(self.table)
         
         # insert first filler row for putting in guesses:
-        self.control.insert_row(self.table, self.startIdx, self.fillers[0]) 
+        self.control.insert_row(self.table, self.startIdx, self.fillers[0], random.choices(string.ascii_lowercase, k=10)) 
         self.rowsAdded = 1
         newSize = self.control.get_table_size(self.table)
 
@@ -108,7 +109,7 @@ class DBREACHerImpl(dbreacher.DBREACHer):
         i = 1
         while newSize <= oldSize: 
             #print(self.fillers[i][100:])
-            self.control.insert_row(self.table, self.startIdx + i, compression_bootstrapper + self.fillers[i][100:])
+            self.control.insert_row(self.table, self.startIdx + i, compression_bootstrapper + self.fillers[i][100:], random.choices(string.ascii_lowercase, k=10))
             #time.sleep(1)
             newSize = self.control.get_table_size(self.table)
             i += 1

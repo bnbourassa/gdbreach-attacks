@@ -6,6 +6,7 @@ import random
 import string
 import time
 import sys
+import numpy as np
 
 maxRowSize = 200
 
@@ -26,12 +27,12 @@ if sys.argv[1] == "--random":
         secret = "".join(random.choices(string.ascii_lowercase, k=size))
         possibilities.append(secret)
 if sys.argv[1] == "--english":
-    with open("../res/10000-english-long.txt") as f:
+    with open("../resources/10000-english-long.txt") as f:
         for line in f:
             word = line.strip().lower()
             possibilities.append(word)
 if sys.argv[1] == "--emails":
-    with open("../res/fake-emails.txt") as f:
+    with open("../resources/fake-emails.txt") as f:
         for line in f:
             email = line.strip().lower()
             possibilities.append(email)
@@ -50,6 +51,8 @@ print("true_label,num_secrets,b_no,b_guess,b_yes,setup_time,per_guess_time")
 secrets_to_try = [1, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240]
 secrets_to_try.reverse()
 for num_secrets in secrets_to_try:
+    print("current num_secrets:")
+    print(num_secrets)
     random.shuffle(possibilities)
     for trial in range(0, 200, num_secrets):
         success = False
@@ -62,7 +65,7 @@ for num_secrets in secrets_to_try:
         correct_guesses = set()
         for secret_idx in range(num_secrets):
             secret = possibilities[(trial + secret_idx) % len(possibilities)]
-            control.insert_row(table, secret_idx, secret)
+            control.insert_row(table, secret_idx, secret, random.choices(string.ascii_lowercase, k=10))
             guesses.append(secret)
             correct_guesses.add(secret)
 
@@ -111,4 +114,4 @@ for num_secrets in secrets_to_try:
         for guess, score_tuple in refScores:
             label = 1 if guess in correct_guesses else 0
             print(str(label)+","+str(num_secrets)+","+str(score_tuple[0])+","+str(score_tuple[1])+","+str(score_tuple[2]) +","+str(setupEnd - setupStart)+","+str((end-setupEnd)/num_secrets))
-
+print('Finished test_decision_attack_maria file')
