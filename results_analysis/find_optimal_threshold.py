@@ -3,14 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-text_type = sys.argv[1].replace("--", "")
+# text_type = sys.argv[1].replace("--", "")
 
 fig, ax = plt.subplots()
 ax.set(xlabel="threshold", ylabel="accuracy", title="Accuracy of decision attack for different threshold values")
 for c in ["snappy", "zlib"]:
     true_labels = []
     ref_scores = []
-    with open('decision-data-results/decision-data-mongo-' + text_type + '-' + c + '.csv') as csvfile:
+    with open('TEST_20_INNODB.csv') as csvfile:
+    # with open('decision-data-results/decision-data-mongo-' + text_type + '-' + c + '.csv') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             if(row[0] == "0" or row[0] == "1"):
@@ -33,7 +34,7 @@ for c in ["snappy", "zlib"]:
 
     ax.plot(thresholds, accuracies, label=c)
     
-    f = open(text_type + "_" + c+"_threshold_data.csv", "w")
+    f = open("CLEAN_RUN_threshold_data.csv", "w")
     f.write("threshold,accuracy\n")
     for i in range(0,len(thresholds)):
     	f.write(str(thresholds[i])+","+str(accuracies[i]) + "\n")

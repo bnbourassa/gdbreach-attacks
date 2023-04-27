@@ -26,7 +26,7 @@ if sys.argv[1] == "--random":
         secret = "".join(random.choices(string.ascii_lowercase, k=size))
         possibilities.append(secret)
 if sys.argv[1] == "--english":
-    with open("../res/10000-english-long.txt") as f:
+    with open("../resources/10000-english-long.txt") as f:
         for line in f:
             word = line.strip().lower()
             possibilities.append(word)
@@ -45,9 +45,10 @@ for idx, s in enumerate(possibilities):
         print("Table grew after " + str(idx + 1) + " insertions")
         assert(False)
 '''
-print("true_label,num_secrets,b_no,b_guess,b_yes,setup_time,per_guess_time")
+print("deleted,true_label,num_secrets,b_no,b_guess,b_yes,setup_time,per_guess_time")
 
 secrets_to_try = [1, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240]
+# secrets_to_try = [20]
 secrets_to_try.reverse()
 for num_secrets in secrets_to_try:
     random.shuffle(possibilities)
@@ -74,6 +75,14 @@ for num_secrets in secrets_to_try:
         if sys.argv[1] == "--emails":
             fillerCharSet = fillerCharSet.replace('_', '').replace('.', '').replace('@', '')
         dbreacher = dbreacher_impl.DBREACHerImpl(control, table, num_secrets, maxRowSize, fillerCharSet, ord('*'))
+
+        deleted_guesses = []
+        for i in range(len(correct_guesses)//2):
+            guess_len = len(list(correct_guesses)[i])
+            # temp_str = '.' * guess_len
+            # control.update_row(table, i, temp_str)
+            control.delete_guess(table, list(correct_guesses)[i])
+            deleted_guesses.append(list(correct_guesses)[i])
 
         attacker = decision_attacker.decisionAttacker(dbreacher, guesses)
         while not success:
@@ -110,5 +119,6 @@ for num_secrets in secrets_to_try:
         refScores = attacker.getGuessAndReferenceScores()
         for guess, score_tuple in refScores:
             label = 1 if guess in correct_guesses else 0
-            print(str(label)+","+str(num_secrets)+","+str(score_tuple[0])+","+str(score_tuple[1])+","+str(score_tuple[2]) +","+str(setupEnd - setupStart)+","+str((end-setupEnd)/num_secrets))
+            deleted = 'yes' if guess in deleted_guesses else 'no'
+            print(str(deleted) + ',' + str(label)+","+str(num_secrets)+","+str(score_tuple[0])+","+str(score_tuple[1])+","+str(score_tuple[2]) +","+str(setupEnd - setupStart)+","+str((end-setupEnd)/num_secrets))
 

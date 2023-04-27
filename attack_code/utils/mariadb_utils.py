@@ -11,7 +11,7 @@ class MariaDBController:
     def __init__(self, db : str):
         self.db_name = db
         self.db_path = tablespaces_path + db + "/"
-        self.conn = mariadb.connect(user="root", host="localhost", database=db)
+        self.conn = mariadb.connect(user="root", unix_socket="/var/run/mysqld/mysqld.sock", host="localhost", database=db)
         self.cur = self.conn.cursor()
         self.old_edit_time = None
         self.backupdict = dict()
@@ -101,6 +101,11 @@ class MariaDBController:
 
     def delete_row(self, tablename : str, idx : int):
         self.cur.execute("delete from " + tablename + " where id=" + str(idx))
+        self.conn.commit()
+        self.__flush_and_wait_for_change(tablename)
+
+    def delete_guess(self, tablename: str, data: str):
+        self.cur.execute("delete from " + tablename + " where data=%s", (data,))
         self.conn.commit()
         self.__flush_and_wait_for_change(tablename)
 

@@ -1,0 +1,16 @@
+records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time
+current num_secrets:
+1
+inserting filler
+1,1,1.0,1.0,1.0,1.0,1.0,0.45810914039611816,0.814745100180308
+current num_secrets:
+140
+inserting filler
+140,140,0.6071428571428571,0.5285714285714286,0.45,0.4,0.36428571428571427,0.21610283851623535,1.8615045221646627
+current num_secrets:
+160
+inserting filler
+160,160,0.7,0.55625,0.5125,0.4625,0.43125,0.18244361877441406,2.18032497104009
+current num_secrets:
+180
+inserting filler
