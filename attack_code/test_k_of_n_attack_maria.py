@@ -72,13 +72,23 @@ for num_secrets in secrets_to_try:
         if sys.argv[1] == "--emails":
             fillerCharSet = fillerCharSet.replace('_', '').replace('.', '').replace('@', '')
         dbreacher = dbreacher_impl.DBREACHerImpl(control, table, num_secrets, maxRowSize, fillerCharSet, ord('*'))
+        
+#        for guess in correct_guesses:
+ #           control.delete_guess(table, guess)
+
+        # print(len(correct_guesses))
+        # for i in range(len(correct_guesses)//4):
+          #  control.delete_guess(table, list(correct_guesses)[i])
+        
+       # control.delete_guess(table, list(correct_guesses)[0])
+
 
         attacker = decision_attacker.decisionAttacker(dbreacher, guesses)
         while not success:
             setupStart = time.time()
             success = attacker.setUp()
             setupEnd = time.time()
-            if success:
+            if success: 
                 success = attacker.tryAllGuesses()
             end = time.time()
         refScores = attacker.getGuessAndReferenceScores()

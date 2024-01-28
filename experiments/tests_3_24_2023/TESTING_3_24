@@ -1,0 +1,10 @@
+records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time
+1
+secrets to try:
+secrets to try:
+[1, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240]
+records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time
+secrets to try:
+[20]
+records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time
+20
