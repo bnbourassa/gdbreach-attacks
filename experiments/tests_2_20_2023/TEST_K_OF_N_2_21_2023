@@ -1,0 +1,2 @@
+records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time
+160,160,0.28125,0.16875,0.125,0.09375,0.0875,4.970810890197754,1.9806389061609904

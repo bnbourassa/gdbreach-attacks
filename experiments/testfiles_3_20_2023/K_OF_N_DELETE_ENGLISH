@@ -1,0 +1,6 @@
+records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time
+1,1,1.0,1.0,1.0,0.0,0.0,0.6592185497283936,0.8566183846791585
+records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time
+records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time
+1,1,1.0,1.0,1.0,1.0,1.0,0.6171801090240479,0.6234736289978028
+20,20,0.2,0.2,0.2,0.2,0.2,0.5250504016876221,7.764186766306559

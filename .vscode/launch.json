@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python MariaDB: Run Decision Attack",
+            "type": "python",
+            "request": "launch",
+            "program": "experiments/run_decision_attack_experiments.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "sudo": true,
+            "args": ["--db", "MariaDB", "--version", "baseline", "--out", "1_28_2024_EXPERIMENTAL_DECISION_TESTING_GROUPING_BASELINE_FIVE_PERCENT_ROUND_1", "--data-type", "english", "--compress", "zlib", "--mode", "complete"]
+        },
+        {
+            "name": "Python Spit: Run Decision Attack",
+            "type": "python",
+            "request": "launch",
+            "program": "experiments/run_decision_attack_experiments.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "sudo": true,
+            "args": ["--db", "Spit", "--version", "grouping", "--out", "1_18_2024_SPIT_TEST_ONE_PERCENT", "--data-type", "english", "--compress", "zlib", "--mode", "complete"]
+        },
+        {
+            "name": "Python: Run K of N Attack",
+            "type": "python",
+            "request": "launch",
+            "program": "experiments/run_k_of_n_experiments.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "sudo": true,
+            "args": ["--db", "MariaDB", "--out", "8_27_2023_K_OF_N_TEST_DELETE_SECOND_HALF", "--data-type", "english", "--compress", "zlib", "--mode", "complete"]
+        }
+    ]
+}

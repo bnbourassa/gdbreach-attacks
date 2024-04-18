@@ -11,7 +11,7 @@ class MariaDBController:
     def __init__(self, db : str):
         self.db_name = db
         self.db_path = tablespaces_path + db + "/"
-        self.conn = mariadb.connect(user="root", host="localhost", database=db)
+        self.conn = mariadb.connect(user="root", password="<password>", unix_socket="/var/run/mysqld/mysqld.sock", host="localhost", database=db)
         self.cur = self.conn.cursor()
         self.old_edit_time = None
         self.backupdict = dict()
@@ -25,11 +25,11 @@ class MariaDBController:
             time.sleep(0.1)
             sleeps += 1
             if sleeps > max_sleeps:
-                print("max sleeps")
+                # print("max sleeps")
                 time.sleep(10)
                 break
-        if sleeps > 0:
-            print("done sleeping")
+        # if sleeps > 0:
+            # print("done sleeping")
         self.old_edit_time = os.path.getmtime(self.db_path + tablename + ".ibd")
         self.cur.execute("unlock tables")
 
@@ -89,6 +89,13 @@ class MariaDBController:
             print("Size of table " + tablename + ": " + str(table_size))
         return table_size
 
+    def get_row(self, tablename : str, idx: int):
+        self.cur.execute("select data from " + tablename + " where id = " + str(idx))
+        rowData = self.cur.fetchall()[0][0]
+        self.conn.commit()
+        self.__flush_and_wait_for_change(tablename)
+        return rowData
+    
     def insert_row(self, tablename : str, idx : int, data : str):
         self.cur.execute("insert into " + tablename + " (id, data) values (?, ?)", (idx, data))
         self.conn.commit()
@@ -101,6 +108,11 @@ class MariaDBController:
 
     def delete_row(self, tablename : str, idx : int):
         self.cur.execute("delete from " + tablename + " where id=" + str(idx))
+        self.conn.commit()
+        self.__flush_and_wait_for_change(tablename)
+
+    def delete_guess(self, tablename: str, data: str):
+        self.cur.execute("delete from " + tablename + " where data=%s", (data,))
         self.conn.commit()
         self.__flush_and_wait_for_change(tablename)
 

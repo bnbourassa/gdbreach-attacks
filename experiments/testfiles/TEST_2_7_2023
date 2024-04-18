@@ -1,0 +1,15 @@
+records_on_page,k,accuracy_n_500,accuracy_n_750,accuracy_n_1000,accuracy_n_1250,accuracy_n_1500,setup_time,per_guess_time
+current num_secrets:
+1
+1,1,1.0,1.0,1.0,1.0,1.0,0.558025598526001,0.52611279408137
+current num_secrets:
+20
+20,20,0.3,0.25,0.15,0.15,0.05,0.5544934272766113,1.283630611737569
+current num_secrets:
+40
+40,40,0.425,0.325,0.3,0.25,0.2,0.5188760757446289,1.2429140127499898
+current num_secrets:
+60
+60,60,0.5166666666666667,0.35,0.35,0.35,0.35,0.33230066299438477,3.182237687746684
+current num_secrets:
+80

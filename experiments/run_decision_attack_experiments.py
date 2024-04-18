@@ -3,7 +3,9 @@ import subprocess
 
 parser = argparse.ArgumentParser(description="Run experiments to test precision of k of n DBREACH attack")
 
-parser.add_argument("--db", dest="database", action="store", choices={"MongoDB", "MariaDB"}, help="database to use", required = True)
+parser.add_argument("--db", dest="database", action="store", choices={"MongoDB", "MariaDB", "Spit"}, help="database to use", required = True)
+
+parser.add_argument("--version", dest="fileversion", action="store", choices={"baseline", "binary", "relscores", "binaryrel", "grouping", "binarygrouping"}, help="attack version to run", required = True)
 
 parser.add_argument("--out", dest="outfile", action="store", help="output file to write results to", required=True)
 
@@ -25,10 +27,23 @@ if (args.database == "MongoDB"):
         python_args += ["--num_secrets" "1", "20", "40", "60", "80", "100", "120", "140", "160", "180", "200", "220", "240"]
     subprocess.run(python_args, stdout=open(args.outfile, "a"))
 elif (args.database == "MariaDB"):
-    python_args = ["python3", "-u", "../attack_code/test_decision_attack_maria.py", "--" + args.datatype]
+    python_args = ["python3", "-u", "./attack_code/test_decision_attack_maria.py", "--" + args.datatype]
+    if args.fileversion == "binary":
+        python_args[2] = "./attack_code/test_decision_attack_maria_binary.py"
+    elif args.fileversion == "relscores":
+        python_args[2] = "./attack_code/test_decision_attack_maria_rel_scores.py"
+    elif args.fileversion == "binaryrel":
+        python_args[2] = "./attack_code/test_decision_attack_maria_binary_and_rel_scores.py"
+    elif args.fileversion == "grouping":
+        python_args[2] = "./attack_code/test_decision_attack_maria_grouping.py"
+    elif args.fileversion == "binarygrouping":
+        python_args[2] = "./attack_code/test_decision_attack_maria_grouping_binary.py"
     if args.mode == "demo":
-        python_args += ["--num_secrets", "1"]
+        python_args += ["--num_secrets", "240"]
     else:
-        python_args += ["--num_secrets" "1", "20", "40", "60", "80", "100", "120", "140", "160", "180", "200", "220", "240"]
+        python_args += ["--num_secrets", "1", "20", "40", "60", "80", "100", "120", "140", "160", "180", "200", "220", "240"]
     print("WARNING: Prior to running this program with MariaDB, make sure your DB compression configuration matches the requested compression algorithm")
+    subprocess.run(python_args, stdout=open(args.outfile, "a"))
+elif (args.database == "Spit"):
+    python_args = ["python3", "-u", "./attack_code/spit_random_pair.py", "--" + args.datatype]
     subprocess.run(python_args, stdout=open(args.outfile, "a"))

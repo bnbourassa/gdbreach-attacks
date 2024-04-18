@@ -27,8 +27,10 @@ if (args.database == "MongoDB"):
 elif (args.database == "MariaDB"):
     python_args = ["python3", "-u", "../attack_code/test_k_of_n_attack_maria.py", "--" + args.datatype]
     if args.mode == "demo":
-        python_args += ["--num_secrets", "1"]
+       # python_args += ["--num_secrets", "1"]
+       python_args += ["--num_secrets", "20"]
     else:
-        python_args += ["--num_secrets" "1", "20", "40", "60", "80", "100", "120", "140", "160", "180", "200", "220", "240"]
+        # python_args += ["--num_secrets", "1", "20", "40", "60", "80", "100", "120", "140", "160", "180", "200", "220", "240"]
+        python_args += ["--num_secrets", "140", "160", "180", "200", "220", "240"]
     print("WARNING: Prior to running this program with MariaDB, make sure your DB compression configuration matches the requested compression algorithm")
     subprocess.run(python_args, stdout=open(args.outfile, "a"))
