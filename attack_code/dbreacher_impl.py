@@ -11,23 +11,28 @@ class DBREACHerImpl(dbreacher.DBREACHer):
         self.rowsAdded = 0 
         self.rowsChanged = [False, False, False, False]
         self.fillersInserted = False
+        self.db_count = 0
+        self.db_setup_count = 0
+        self.db_ref_score_count = 0
+        self.db_guess_count = 0
+        self.db_grouping_count = 0
+        self.db_individual_guess_count = 0
 
     def reinsertFillers(self) -> bool:
-        #self.control.get_table_size(self.table, verbose=True)
         self.compressibilityScoreReady = False
-        #print(self.bytesShrunkForCurrentGuess)
         if self.fillersInserted:
             
             for row in range(self.startIdx, self.rowsAdded + self.startIdx - (self.bytesShrunkForCurrentGuess // 100)):
                 self.control.update_row(self.table, row, utils.get_compressible_str(200, char = self.compressChar))
+                self.db_count += 1
             for row in range(self.startIdx, self.rowsAdded + self.startIdx):
                 self.control.delete_row(self.table, row)
+                self.db_count += 1
             
             self.bytesShrunkForCurrentGuess = 0
             self.fillers = [''.join(random.choices(self.fillerCharSet, k=self.maxRowSize)) for _ in range(self.numFillerRows)]
         else:
             pass
-
         return self.insertFillers()
 
 
@@ -38,6 +43,7 @@ class DBREACHerImpl(dbreacher.DBREACHer):
         
         # insert first filler row for putting in guesses:
         self.control.insert_row(self.table, self.startIdx, self.fillers[0]) 
+        self.db_count += 1
         self.rowsAdded = 1
         newSize = self.control.get_table_size(self.table)
 
@@ -50,9 +56,8 @@ class DBREACHerImpl(dbreacher.DBREACHer):
         # insert filler rows until table grows:
         i = 1
         while newSize <= oldSize: 
-            #print(self.fillers[i][100:])
             self.control.insert_row(self.table, self.startIdx + i, compression_bootstrapper + self.fillers[i][100:])
-            #time.sleep(1)
+            self.db_count += 1
             newSize = self.control.get_table_size(self.table)
             i += 1
             self.rowsAdded += 1
@@ -66,17 +71,20 @@ class DBREACHerImpl(dbreacher.DBREACHer):
         # reset first 3 rows to original state before inserting guess:
         if self.rowsChanged[0]:
             self.control.update_row(self.table, self.startIdx, self.fillers[0])
+            self.db_count += 1
             self.rowsChanged[0] = False
         compression_bootstrapper = utils.get_compressible_str(100, char = self.compressChar)
         for i in range(1, 4):
             if self.rowsChanged[i]:
                 self.rowsChanged[i] = False
                 self.control.update_row(self.table, self.startIdx + self.rowsAdded - i, compression_bootstrapper + self.fillers[self.rowsAdded - i][100:])
+                self.db_count += 1
         
         old_size = self.control.get_table_size(self.table)
         new_first_row = guess + self.fillers[0][len(guess):]
         if new_first_row != self.fillers[0]:
             self.control.update_row(self.table, self.startIdx, new_first_row)
+            self.db_count += 1
             self.rowsChanged[0] = True
         new_size = self.control.get_table_size(self.table)
         return new_size < old_size
@@ -96,8 +104,10 @@ class DBREACHerImpl(dbreacher.DBREACHer):
         shrunk = self.insertGuessAndCheckIfShrunk(refGuess)
         if shrunk:
             raise RuntimeError("Table shrunk too early on insertion of guess")
+        curr_db_count = self.db_count
         while not shrunk:
             shrunk = self.addCompressibleByteAndCheckIfShrunk()
+        add_compressible_db_count = self.db_count - curr_db_count
         return self.getBytesShrunkForCurrentGuess()
 
     def addCompressibleByteAndCheckIfShrunk(self) -> bool:
@@ -107,14 +117,17 @@ class DBREACHerImpl(dbreacher.DBREACHer):
             self.rowsChanged[1] = True
             compress_str = utils.get_compressible_str(100 + self.bytesShrunkForCurrentGuess, char = self.compressChar)
             self.control.update_row(self.table, self.startIdx + self.rowsAdded - 1, compress_str + self.fillers[self.rowsAdded - 1][len(compress_str):]) 
+            self.db_count += 1
         elif self.bytesShrunkForCurrentGuess <= 200: 
             self.rowsChanged[2] = True
             compress_str = utils.get_compressible_str(self.bytesShrunkForCurrentGuess, char = self.compressChar) 
             self.control.update_row(self.table, self.startIdx + self.rowsAdded - 2, compress_str + self.fillers[self.rowsAdded - 2][len(compress_str):])
+            self.db_count += 1
         elif self.bytesShrunkForCurrentGuess <= 300:
             self.rowsChanged[3] = True
             compress_str = utils.get_compressible_str(self.bytesShrunkForCurrentGuess - 100, char = self.compressChar)
             self.control.update_row(self.table, self.startIdx + self.rowsAdded - 3, compress_str + self.fillers[self.rowsAdded - 3][len(compress_str):])
+            self.db_count += 1
         else:
             raise RuntimeError()
             self.compressibilityScoreReady = True
