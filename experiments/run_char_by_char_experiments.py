@@ -5,7 +5,7 @@ parser = argparse.ArgumentParser(description="Run experiments to test precision 
 
 parser.add_argument("--db", dest="database", action="store", choices={"MongoDB", "MariaDB", "Spit"}, help="database to use", required = True)
 
-parser.add_argument("--version", dest="fileversion", action="store", choices={"baseline", "binary", "groupbaseline", "delete", "grouping"}, help="attack version to run", required = True)
+parser.add_argument("--version", dest="fileversion", action="store", choices={"baseline", "binary"}, help="attack version to run", required = True)
 
 parser.add_argument("--out", dest="outfile", action="store", help="output file to write results to", required=True)
 
@@ -21,27 +21,25 @@ if (args.database == "MongoDB"):
     if args.compress_algo == "lz4":
         raise Exception("MongoDB does not support the LZ4 compression algorithm")
     python_args = ["python3", "-u", "../attack_code/test_decision_attack_mongo.py", "--" + args.datatype, "--" + args.compress_algo]
-    if args.fileversion == "binary":
-        python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_mongo_binary.py"
-    elif args.fileversion == "baseline":
-        python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_mongo_baseline.py"
     if args.mode == "demo":
         python_args += ["--num_secrets", "1"]
     else:
-        python_args += ["--num_secrets" "1", "20", "40", "60", "80", "100", "120", "140", "160", "180", "200", "220", "240"]
+        python_args += ["--num_secrets", "1", "20", "40", "60", "80", "100", "120", "140", "160", "180", "200", "220", "240"]
     subprocess.run(python_args, stdout=open(args.outfile, "a"))
 elif (args.database == "MariaDB"):
-    python_args = ["python3", "-u", "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria.py", "--" + args.datatype]
+    python_args = ["python3", "-u", "/home/britney/dbreach-britney/attack_code/test_char_by_char_amplifier.py", "--" + args.datatype]
     if args.fileversion == "binary":
-        python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_binary.py"
-    elif args.fileversion == "baseline":
-        python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_baseline.py"
-    elif args.fileversion == "groupbaseline":
-        python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_grouping_baseline.py"
-    elif args.fileversion == "grouping":
-        python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_delete.py"
-    elif args.fileversion == "delete":
-        python_args[2] = "./dbreach-britney/attack_code/test_decision_attack_maria_grouping_binary.py"
+        python_args[2] = "/home/britney/dbreach-britney/attack_code/test_char_by_char_binary.py"
+    if args.fileversion == 'baseline':
+        python_args[2] = "/home/britney/dbreach-britney/attack_code/test_char_by_char_amplifier_baseline.py"
+    # elif args.fileversion == "relscores":
+    #     python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_rel_scores.py"
+    # elif args.fileversion == "binaryrel":
+    #     python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_binary_and_rel_scores.py"
+    # elif args.fileversion == "grouping":
+    #     python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_grouping.py"
+    # elif args.fileversion == "binarygrouping":
+    #     python_args[2] = "./dbreach-britney/attack_code/test_decision_attack_maria_grouping_binary.py"
     if args.mode == "demo":
         python_args += ["--num_secrets", "240"]
     else:
