@@ -32,6 +32,14 @@ class decisionAttacker():
                 return False
             while not shrunk:
                 shrunk = self.dbreacher.addCompressibleByteAndCheckIfShrunk(guess)
+            if self.dbreacher.getBytesShrunkForCurrentGuess() == 100:
+                shrunk = False
+                while not shrunk:
+                    shrunk = self.dbreacher.addCompressibleByteAndCheckIfShrunk(guess, 100, 200)
+            if self.dbreacher.getBytesShrunkForCurrentGuess() == 200:
+                shrunk = False
+                while not shrunk:
+                    shrunk = self.dbreacher.addCompressibleByteAndCheckIfShrunk(guess, 200, 300)
             score = self.dbreacher.getBytesShrunkForCurrentGuess()
             if verbose:
                 print("\"" + guess + "\" bytesShrunk = " + str(score))
