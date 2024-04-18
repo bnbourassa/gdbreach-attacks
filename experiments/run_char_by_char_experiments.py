@@ -32,14 +32,6 @@ elif (args.database == "MariaDB"):
         python_args[2] = "/home/britney/dbreach-britney/attack_code/test_char_by_char_binary.py"
     if args.fileversion == 'baseline':
         python_args[2] = "/home/britney/dbreach-britney/attack_code/test_char_by_char_amplifier_baseline.py"
-    # elif args.fileversion == "relscores":
-    #     python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_rel_scores.py"
-    # elif args.fileversion == "binaryrel":
-    #     python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_binary_and_rel_scores.py"
-    # elif args.fileversion == "grouping":
-    #     python_args[2] = "/home/britney/dbreach-britney/attack_code/test_decision_attack_maria_grouping.py"
-    # elif args.fileversion == "binarygrouping":
-    #     python_args[2] = "./dbreach-britney/attack_code/test_decision_attack_maria_grouping_binary.py"
     if args.mode == "demo":
         python_args += ["--num_secrets", "240"]
     else:
