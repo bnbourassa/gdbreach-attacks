@@ -103,11 +103,11 @@ class DBREACHerImpl(dbreacher.DBREACHer):
         refGuess = self.fillers[1][100:][:length]
         shrunk = self.insertGuessAndCheckIfShrunk(refGuess)
         if shrunk:
-            raise RuntimeError("Table shrunk too early on insertion of guess")
+            return 1
+            # raise RuntimeError("Table shrunk too early on insertion of guess")
         curr_db_count = self.db_count
         while not shrunk:
             shrunk = self.addCompressibleByteAndCheckIfShrunk()
-        add_compressible_db_count = self.db_count - curr_db_count
         return self.getBytesShrunkForCurrentGuess()
 
     def addCompressibleByteAndCheckIfShrunk(self) -> bool:
