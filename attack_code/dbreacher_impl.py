@@ -99,7 +99,7 @@ class DBREACHerImpl(dbreacher.DBREACHer):
         return self.getBytesShrunkForCurrentGuess()
 
     # raises RuntimeError if table shrinks prematurely
-    def getSYesReferenceScore(self, length : int, group) -> float:
+    def getSYesReferenceScore(self, length : int) -> float:
         refGuess = self.fillers[1][100:][:length]
         shrunk = self.insertGuessAndCheckIfShrunk(refGuess)
         if shrunk:
